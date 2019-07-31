@@ -1,5 +1,8 @@
 ﻿using SortExtravaganza.Common;
 using System;
+using System.Collections.Generic;
+using System.Drawing;
+using Common;
 
 namespace ShellSort
 {
@@ -9,40 +12,50 @@ namespace ShellSort
 //independently of each other.
 class ShellSort
 {
-    static int Sort(int[] array)
-    {
-        int length = array.Length;
+	static int Sort(int[] array)
+	{
+		int length = array.Length;
 
-        for (int h = length / 2; h > 0; h /= 2)
-        {
-            for (int i = h; i < length; i += 1)
-            {
-                int temp = array[i];
+		for (int h = length / 2; h > 0; h /= 2)
+		{
+			var hilite = new List<int>();
+			for (int i = h; i < length; i += 1)
+			{
+				int temp = array[i];
 
-                int j;
-                for (j = i; j >= h && array[j - h] > temp; j -= h)
-                {
-                    array[j] = array[j - h];
-                }
+				int j;
+				for (j = i; j >= h && array[j - h] > temp; j -= h)
+				{
+						array[j] = array[j - h];
+						hilite.Add(j);
+				}
 
-                array[j] = temp;
-            }
-        }
-        return 0;
-    }
+				array[j] = temp;
+				hilite.Add(j);
+				graph = CommonFunctions.GraphArray(array, hilite, Color.Yellow);
+				gifWriter.WriteFrame(graph);
+			}
+		}
 
-    public static void Main()
-    {
-        int[] array = { 53, 19, 71, 3, 66, 62, 20, 84 };
+		gifWriter.WriteFrame(graph, 1000);		// repeat final image, hold for a second.
+		return 0;
+	}
 
-        Console.WriteLine("Shell Sort");
+	private static IGifWriter gifWriter;
+	private static Image graph;
+	public static void Main()
+	{
+			//int[] array = { 53, 19, 71, 3, 66, 62, 20, 84 };
+			int[] array = CommonFunctions.CreateTestArray(33, TestType.Shuffled);
 
-        CommonFunctions.PrintInitial(array);
+			Console.WriteLine("Shell Sort");
 
-        Sort(array);
+		CommonFunctions.PrintInitial(array);
+		using(gifWriter = new GifWriter(@"C:\Temp\ShellSort.ani.gif",150, 0))
+				Sort(array);
 
-        CommonFunctions.PrintFinal(array);
-        Console.ReadKey();
-    }
+		CommonFunctions.PrintFinal(array);
+		Console.ReadKey();
+	}
 }
 }
