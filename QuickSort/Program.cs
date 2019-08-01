@@ -1,5 +1,6 @@
 ﻿using SortExtravaganza.Common;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using Common;
@@ -18,72 +19,80 @@ namespace QuickSort
 //   Continue recursively applying this algorithm until the set is sorted.
 class QuickSort
 {
-    static int Partition(int[] array, int low,
-                                    int high)
-    {
-	    int[] hilite = Enumerable.Range(low, high - low + 1).ToArray();
-	    graph = CommonFunctions.GraphArray(array, hilite, Color.BlanchedAlmond);
-	    gifWriter.WriteFrame(graph);
+	static int Partition(int[] array, int low,
+									int high)
+	{
+		int[] hilite = Enumerable.Range(low, high - low + 1).ToArray();
+		graph = CommonFunctions.GraphArray(array, hilite, Color.BlanchedAlmond);
+		gifWriter.WriteFrame(graph);
 
 			//1. Select a pivot point.
 			int pivot = array[high];
 
-        int lowIndex = (low - 1);
+		int lowIndex = (low - 1);
 
-        //2. Reorder the collection.
-        for (int j = low; j < high; j++)
-        {
-	        graph = CommonFunctions.GraphArray(array, hilite, Color.BlanchedAlmond);
-	        gifWriter.WriteFrame(graph);
-            if (array[j] <= pivot)
-            {
-                lowIndex++;
+		//2. Reorder the collection.
+		for (int j = low; j < high; j++)
+		{
+			hilite = new int[] {high, j};
+			graph = CommonFunctions.GraphArray(array, hilite, Color.Chocolate);
+			gifWriter.WriteFrame(graph);
+			if (array[j] <= pivot)
+			{
+				lowIndex++;
 
-                int temp = array[lowIndex];
-                array[lowIndex] = array[j];
-                array[j] = temp;
-            }
-        }
+				int temp = array[lowIndex];
+				array[lowIndex] = array[j];
+				array[j] = temp;
+				hilite = new int[] { lowIndex, j };
+				graph = CommonFunctions.GraphArray(array, hilite, Color.Yellow);
+				gifWriter.WriteFrame(graph);
+			}
+			}
 
-        int temp1 = array[lowIndex + 1];
-        array[lowIndex + 1] = array[high];
-        array[high] = temp1;
+		int temp1 = array[lowIndex + 1];
+		array[lowIndex + 1] = array[high];
+		array[high] = temp1;
 
-        return lowIndex + 1;
-    }
+		return lowIndex + 1;
+	}
 
-    static void Sort(int[] array, int low, int high)
-    {
-        if (low < high)
-        {
-            int partitionIndex = Partition(array, low, high);
+	static void Sort(int[] array, int low, int high)
+	{
+		if (low < high)
+		{
+			int partitionIndex = Partition(array, low, high);
 
-            //3. Recursively continue sorting the array
-            Sort(array, low, partitionIndex - 1);
-            Sort(array, partitionIndex + 1, high);
-        }
-    }
+			//3. Recursively continue sorting the array
+			Sort(array, low, partitionIndex - 1);
+			Sort(array, partitionIndex + 1, high);
+		}
+	}
 
-    private static IGifWriter gifWriter;
-    private static Image graph;
+		private static IGifWriter gifWriter;
+	private static Image graph;
 
 
 		public static void Main()
-    {
-        int[] array = { 72, 12, 6, 33, 81, 97, 37, 59, 52, 1, 20 };
+	{
+		int[] array = { 72, 12, 6, 33, 81, 97, 37, 59, 52, 1, 20 };
 //        int[] array = CommonFunctions.CreateTestArray(33, TestType.Shuffled);
 
 			int length = array.Length;
 
-        Console.WriteLine("QuickSort");
-        CommonFunctions.PrintInitial(array);
+		Console.WriteLine("QuickSort");
+		CommonFunctions.PrintInitial(array);
 
-        using (gifWriter = new GifWriter(@"C:\Temp\QuickSort.11.ani.gif", 150, 0))
+		using (gifWriter = new GifWriter(@"C:\Temp\QuickSort.11.ani.gif", 150, 0))
+		{
 			Sort(array, 0, length - 1);
+			graph = CommonFunctions.GraphArray(array, new List<int>(), Color.Yellow);
+			gifWriter.WriteFrame(graph, 1000);
+		}
 
-        CommonFunctions.PrintFinal(array);
+		CommonFunctions.PrintFinal(array);
 
-        Console.ReadKey();
-    }
+		Console.ReadKey();
+	}
 }
 }
